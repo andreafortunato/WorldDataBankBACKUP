@@ -13,7 +13,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".myactivities.PlotActivity"></activity>
+        <activity
+            android:name=".myactivities.PlotActivity"
+            android:label="@string/title_activity_plot"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".myactivities.PlotActivity2" />
         <activity android:name=".myactivities.IndicatorActivity" />
         <activity android:name=".myactivities.TopicActivity" />
         <activity android:name=".myactivities.CountryActivity" />

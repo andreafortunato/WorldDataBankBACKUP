@@ -15,6 +15,7 @@ import java.util.List;
 import it.apperol.group.worlddatabank.R;
 import it.apperol.group.worlddatabank.itemlist.MyIndicatorItem;
 import it.apperol.group.worlddatabank.myactivities.PlotActivity;
+import it.apperol.group.worlddatabank.myactivities.PlotActivity2;
 import it.apperol.group.worlddatabank.myviews.MyTextView;
 
 public class MyIndicatorAdapter extends RecyclerView.Adapter<MyIndicatorAdapter.ViewHolder> {

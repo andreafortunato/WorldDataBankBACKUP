@@ -2,8 +2,8 @@ package it.apperol.group.worlddatabank.myadapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +15,6 @@ import java.util.List;
 import it.apperol.group.worlddatabank.R;
 import it.apperol.group.worlddatabank.itemlist.MyIndicatorItem;
 import it.apperol.group.worlddatabank.myactivities.PlotActivity;
-import it.apperol.group.worlddatabank.myactivities.PlotActivity2;
 import it.apperol.group.worlddatabank.myviews.MyTextView;
 
 public class MyIndicatorAdapter extends RecyclerView.Adapter<MyIndicatorAdapter.ViewHolder> {

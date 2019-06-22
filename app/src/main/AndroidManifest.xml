@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="it.apperol.group.worlddatabank">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -12,21 +13,53 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".myactivities.PlotActivity"
-            android:label="@string/title_activity_plot"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".myactivities.PlotActivity2" />
-        <activity android:name=".myactivities.IndicatorActivity" />
-        <activity android:name=".myactivities.TopicActivity" />
-        <activity android:name=".myactivities.CountryActivity" />
-        <activity android:name=".myactivities.MainActivity">
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.apperol.group.worlddatabank.MainActivity" />
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".myactivities.PlotActivity"
+            android:label="@string/title_activity_plot"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".myactivities.IndicatorActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".myactivities.TopicActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".myactivities.CountryActivity"
+            android:label="Choose a country"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".myactivities.MainActivity2"
+            android:screenOrientation="portrait" >
+            <!--
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            -->
         </activity>
     </application>
 

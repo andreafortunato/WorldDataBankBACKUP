@@ -56,6 +56,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginTop="40dp"
                 />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -69,6 +70,8 @@
         android:layout_margin="@dimen/fab_margin"
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        app:srcCompat="@drawable/ic_save"
+        app:backgroundTint="@color/colorPrimaryDark"
+        app:tint="@android:color/white"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

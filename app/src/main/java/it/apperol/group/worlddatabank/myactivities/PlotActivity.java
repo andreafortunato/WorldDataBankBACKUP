@@ -1,11 +1,13 @@
 package it.apperol.group.worlddatabank.myactivities;
 
+import android.app.Dialog;
 import android.graphics.Color;
 import android.os.Bundle;
 
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +15,8 @@ import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.Window;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
@@ -30,9 +34,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import it.apperol.group.worlddatabank.R;
+import it.apperol.group.worlddatabank.SaveShareDialog;
 import it.apperol.group.worlddatabank.myadapters.MyCountryAdapter;
 import it.apperol.group.worlddatabank.myadapters.MyIndicatorAdapter;
 import it.apperol.group.worlddatabank.myobjects.PlotObj;
@@ -47,8 +53,11 @@ public class PlotActivity extends AppCompatActivity {
     private JSONArray ja;
     private ArrayList<Entry> dataVals;
 
+    private SaveShareDialog saveShareDialog = new SaveShareDialog();
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plot);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -59,7 +68,9 @@ public class PlotActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                // TODO: MOSTRARE DIALOGBOX "SALVARE? SI/NO"
+                // TODO: MOSTRARE DIALOGBOX "SALVARE/CONDIVIDERE? SI/NO"
+
+                saveShareDialog.show(getSupportFragmentManager(),"mySaveShareDialog");
 
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
@@ -122,6 +133,7 @@ public class PlotActivity extends AppCompatActivity {
         mpLineChart.setData(data);                //imposta dati nel grafico
         mpLineChart.invalidate();
     }
+
     private ArrayList<Entry> dataValues1()
     {
         getDatas();

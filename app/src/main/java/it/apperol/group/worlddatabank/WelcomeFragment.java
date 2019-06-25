@@ -43,7 +43,7 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
         mbCoArIn = Objects.requireNonNull(getActivity()).findViewById(R.id.mbCoArIn);
         mbArInCo = Objects.requireNonNull(getActivity()).findViewById(R.id.mbArInCo);
 
-        myTvTitle.setText(String.format("%s App", myTvTitle.getText()));
+        myTvTitle.setText(String.format("%s App", getResources().getString(R.string.app_title)));
 
         // Il seguente blocco, fino alla riga [93], serve solamente a colorare la scritta 'Google Play Services Api'
         myTvTitle.measure(0,0); // Faccio partire le 'misure' (come fosse un righello) da 0

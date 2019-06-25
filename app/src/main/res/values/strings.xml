@@ -11,7 +11,7 @@
     <string name="welcome">Welcome to</string>
     <string name="app_title">World Bank Open Data</string>
     <string name="app_description">This app allows you to browse through various data/statistics and view, graphically, the changes over the years</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main">World Bank Open Data</string>
 
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
@@ -20,25 +20,13 @@
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
 
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails</string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <!-- Preferences -->
     <string name="choose_info"><![CDATA[(click here for info)\nBy choosing \'Country —> Argument —> Indicator\', you can request a specific indicator starting from the country of interest\n(e.g. Italy —> Economy —> GDP)\n\nBy choosing \'Argument —> Indicator —> Country\', you can request a specific indicator starting from the argument of interest and ending with the country\n(e.g. Economy -> GDP -> Italy)]]></string>
     <string name="english">English</string>
     <string name="italian">Italian</string>
     <string name="language">Language</string>
     <string name="def_lang">Default language</string>
-    <string name="dark_mode">Dark mode</string>
+    <string name="dark_mode">Light/Dark theme</string>
     <string name="storage">Storage</string>
     <string name="del_after">Delete stored statistics after</string>
     <string name="one_day">1 day</string>
@@ -47,5 +35,12 @@
     <string name="one_month">1 month</string>
     <string name="never">Never</string>
     <string name="del_stat">Delete all stored statistics now</string>
-    <string name="del_stat_now">By clicking here you will delete all stored statistics you downloaded</string>
+    <string name="del_stat_now">By clicking here you will delete all statistics you downloaded</string>
+    <string name="save_share">What do you want to do?</string>
+    <string name="save_graph">Save chart to Gallery</string>
+    <string name="share_graph">Share chart on Whatsapp</string>
+    <string name="cancel">Cancel</string>
+    <string name="choose_country">Choose a country</string>
+    <string name="choose_topic">Choose a Topic</string>
+    <string name="choose_indicator">Choose an Indicator</string>
 </resources>

@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.snackbar.Snackbar;
 
 public class SaveShareDialog extends DialogFragment implements View.OnClickListener {
 
@@ -43,8 +44,20 @@ public class SaveShareDialog extends DialogFragment implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.mbSave:
+                dismiss();
                 Log.i("[TAG]", "mbSave");
                 Toast.makeText(getContext(), "mbSave", Toast.LENGTH_SHORT).show();
+
+                // TODO: SALVARE GRAFICO IN GALLERIA
+
+                Snackbar.make(getActivity().findViewById(android.R.id.content), "Chart saved to gallery", Snackbar.LENGTH_LONG)
+                        .setAction("Delete", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                // TODO: ELIMINARE DA GALLERIA IL GRAFICO APPENA SALVATO
+                                Toast.makeText(v.getContext(), "Chart deleted", Toast.LENGTH_SHORT).show();
+                            }
+                        }).show();
                 break;
             case R.id.mbShare:
                 Log.i("[TAG]", "mbShare");

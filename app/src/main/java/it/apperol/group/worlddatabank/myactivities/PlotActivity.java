@@ -72,7 +72,7 @@ public class PlotActivity extends AppCompatActivity {
 
                 saveShareDialog.show(getSupportFragmentManager(),"mySaveShareDialog");
 
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Da eliminare", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });

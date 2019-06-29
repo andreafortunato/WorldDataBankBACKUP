@@ -1,6 +1,8 @@
 package it.apperol.group.worlddatabank.myactivities;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Context;
 import android.os.Bundle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,16 +23,20 @@ import it.apperol.group.worlddatabank.mythreads.FetchData;
 
 public class TopicActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
-    private JSONArray ja;
+    private static Context topicActivityContext;
 
-    private List<MyTopicItem> myTopicItems;
+    private static RecyclerView recyclerView;
+    private static RecyclerView.Adapter adapter;
+    private static JSONArray ja;
+
+    private static List<MyTopicItem> myTopicItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topic);
+
+        topicActivityContext = this;
 
         recyclerView = findViewById(R.id.rvTopic);
         recyclerView.setHasFixedSize(true);
@@ -38,14 +44,11 @@ public class TopicActivity extends AppCompatActivity {
 
 
         myTopicItems = new ArrayList<>();
-        FetchData process = new FetchData("http://api.worldbank.org/v2/topic/?format=json");
-        try {
-            process.execute().get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        FetchData process = new FetchData("http://api.worldbank.org/v2/topic/?format=json", this, 2);
+        process.execute();
+    }
+
+    public static void fetchTopic() {
 
         ja = FetchData.ja;
 
@@ -67,7 +70,7 @@ public class TopicActivity extends AppCompatActivity {
             }
         });
 
-        adapter = new MyTopicAdapter(myTopicItems, this);
+        adapter = new MyTopicAdapter(myTopicItems, topicActivityContext);
         recyclerView.setAdapter(adapter);
     }
 

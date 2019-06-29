@@ -1,6 +1,8 @@
 package it.apperol.group.worlddatabank.myactivities;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Context;
 import android.os.Bundle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,15 +24,20 @@ import it.apperol.group.worlddatabank.mythreads.FetchData;
 
 public class IndicatorActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
-    private JSONArray ja;
+    public static Context indicatorActivityContext;
 
-    private List<MyIndicatorItem> myIndicatorItems;
+    private static RecyclerView recyclerView;
+    private static RecyclerView.Adapter adapter;
+    private static JSONArray ja;
+
+    private static List<MyIndicatorItem> myIndicatorItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        indicatorActivityContext = this;
+
         setContentView(R.layout.activity_indicator);
 
         recyclerView = findViewById(R.id.rvIndicator);
@@ -39,14 +46,11 @@ public class IndicatorActivity extends AppCompatActivity {
 
 
         myIndicatorItems = new ArrayList<>();
-        FetchData process = new FetchData("http://api.worldbank.org/v2/topic/" + MyTopicAdapter.topicID + "/indicator?format=json");
-        try {
-            process.execute().get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        FetchData process = new FetchData("http://api.worldbank.org/v2/topic/" + MyTopicAdapter.topicID + "/indicator?format=json", this, 1);
+        process.execute();
+    }
+
+    public static void fetchIndicator() {
 
         ja = FetchData.ja;
 
@@ -68,7 +72,7 @@ public class IndicatorActivity extends AppCompatActivity {
             }
         });
 
-        adapter = new MyIndicatorAdapter(myIndicatorItems, this);
+        adapter = new MyIndicatorAdapter(myIndicatorItems, indicatorActivityContext);
         recyclerView.setAdapter(adapter);
     }
 }

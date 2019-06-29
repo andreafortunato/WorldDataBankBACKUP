@@ -1,6 +1,7 @@
 package it.apperol.group.worlddatabank.myactivities;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -46,12 +47,14 @@ import it.apperol.group.worlddatabank.mythreads.FetchData;
 
 public class PlotActivity extends AppCompatActivity {
 
-    private List<PlotObj> plotDatas = new ArrayList<>();
-    LineChart mpLineChart;
-    int colorArray[] = {Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW};
+    private static Context plotActivityContext;
+
+    private static List<PlotObj> plotDatas = new ArrayList<>();
+    static LineChart mpLineChart;
+    static int[] colorArray = {Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW};
     //String[] legendName = {"Cazzo","Buddha","PadrePio","Salveenee"};
-    private JSONArray ja;
-    private ArrayList<Entry> dataVals;
+    private static JSONArray ja;
+    private static ArrayList<Entry> dataVals;
 
     private SaveShareDialog saveShareDialog = new SaveShareDialog();
 
@@ -59,6 +62,11 @@ public class PlotActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        plotActivityContext = this;
+
+        ja = MyIndicatorAdapter.ja;
+
         setContentView(R.layout.activity_plot);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -78,6 +86,70 @@ public class PlotActivity extends AppCompatActivity {
         });
 
         mpLineChart =(LineChart) findViewById(R.id.line_chart);
+
+        //FetchData process = new FetchData("http://api.worldbank.org/v2/country/" + MyCountryAdapter.countryIso2Code + "/indicator/" + MyIndicatorAdapter.indicatorID + "?format=json", this, 3);
+        //process.execute();
+
+        fetchPlot();
+
+    }
+
+    private static ArrayList<Entry> dataValues1()
+    {
+        getDatas();
+
+        // Riordino i dati secondo l'anno (ordine crescente)
+        Collections.sort(plotDatas, new Comparator<PlotObj>() {
+            @Override
+            public int compare(PlotObj o1, PlotObj o2) {
+                return o1.getYear().compareToIgnoreCase(o2.getYear());
+            }
+        });
+
+        ArrayList<Entry> dataVals = new ArrayList<>();
+        for(int i = 0; i < plotDatas.size(); i++) {
+            dataVals.add(new Entry(Float.parseFloat(plotDatas.get(i).getYear()), Float.parseFloat(plotDatas.get(i).getValue())));
+        }
+
+        return dataVals;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        plotDatas = new ArrayList<>();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        plotDatas = new ArrayList<>();
+    }
+
+    private static void getDatas() {
+
+        try {
+            for(int i = 0; i < ja.getJSONArray(1).length(); i++){
+                JSONObject jo = (JSONObject) ja.getJSONArray(1).get(i);
+                if(!jo.get("value").equals("") && jo.get("value") != null && !jo.get("value").equals("null") && !jo.isNull("value")) {
+                    plotDatas.add(new PlotObj(jo.get("date").toString(), jo.get("value").toString()));
+                }
+            }
+        }catch (Exception e){
+            Log.i("[CRASH]", "CRASH");
+            e.printStackTrace();
+            return;
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_plot, menu);
+        return true;
+    }
+
+    private void fetchPlot() {
 
         dataVals = dataValues1();
         LineDataSet lineDataSet1 = new LineDataSet(dataVals, "Dio Grafico 1");  //Grafico a linee 1
@@ -120,7 +192,7 @@ public class PlotActivity extends AppCompatActivity {
         description.setText("Porcoddio");
         description.setTextColor(Color.GREEN);
         description.setTextSize(15);
-        mpLineChart.setDescription(description);         //rende visibile la descrizione sul grafico
+        mpLineChart.setDescription(description);             //rende visibile la descrizione sul grafico
 
         // Imposta con che grana verranno mostrati gli anni ('1f' corrissponde a: di anno in anno, '2f' un anno si ed uno no, '3f' un anno si e tre no, ecc...)
         XAxis xAxis = mpLineChart.getXAxis();
@@ -132,69 +204,5 @@ public class PlotActivity extends AppCompatActivity {
         LineData data = new LineData(dataSets);    //grafio a linee
         mpLineChart.setData(data);                //imposta dati nel grafico
         mpLineChart.invalidate();
-    }
-
-    private ArrayList<Entry> dataValues1()
-    {
-        getDatas();
-
-        // Riordino i dati secondo l'anno (ordine crescente)
-        Collections.sort(plotDatas, new Comparator<PlotObj>() {
-            @Override
-            public int compare(PlotObj o1, PlotObj o2) {
-                return o1.getYear().compareToIgnoreCase(o2.getYear());
-            }
-        });
-
-        ArrayList<Entry> dataVals = new ArrayList<>();
-        for(int i = 0; i < plotDatas.size(); i++) {
-            dataVals.add(new Entry(Float.parseFloat(plotDatas.get(i).getYear()), Float.parseFloat(plotDatas.get(i).getValue())));
-        }
-
-        return dataVals;
-    }
-
-    private ArrayList<Entry> dataValues2(){              // LISTA DI VALORI 2
-
-        ArrayList<Entry> dataVals = new ArrayList<>();
-
-        dataVals.add(new Entry(0 , 12));
-        dataVals.add(new Entry(2 , 16));
-        dataVals.add(new Entry(3 , 23));
-        dataVals.add(new Entry(5 , 1));
-        dataVals.add(new Entry(7 , 18));
-        dataVals.add(new Entry(9 , 10));
-        return dataVals;
-    }
-
-    private void getDatas() {
-        FetchData process = new FetchData("http://api.worldbank.org/v2/country/" + MyCountryAdapter.countryIso2Code + "/indicator/" + MyIndicatorAdapter.indicatorID + "?format=json");
-        try {
-            process.execute().get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        ja = FetchData.ja;
-
-        try {
-            for(int i = 0; i < ja.getJSONArray(1).length(); i++){
-                JSONObject jo = (JSONObject) ja.getJSONArray(1).get(i);
-                if(!jo.get("value").equals("") && jo.get("value") != null && !jo.get("value").equals("null") && !jo.isNull("value")) {
-                    plotDatas.add(new PlotObj(jo.get("date").toString(), jo.get("value").toString()));
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_plot, menu);
-        return true;
     }
 }

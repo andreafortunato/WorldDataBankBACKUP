@@ -44,11 +44,16 @@ import it.apperol.group.worlddatabank.myviews.MyTextView;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static Context mainActivityContext;
+
     private String currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mainActivityContext = this.getApplicationContext();
+
         // Inserisco nell'activity principale 'MainActivity' il fragment 'WelcomeFragment', cioè la pagina iniziale
         setContentView(R.layout.activity_main);
         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new WelcomeFragment()).commit();
@@ -88,6 +93,8 @@ public class MainActivity extends AppCompatActivity
         Toast.makeText(this, x.toString(), Toast.LENGTH_SHORT).show();
 
         Log.i("[LOG]", getSupportFragmentManager().toString());
+
+
 
     }
 

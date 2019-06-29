@@ -32,11 +32,17 @@
 
     <PreferenceCategory app:title="@string/dark_mode">
 
-        <SwitchPreferenceCompat
+        <!--<SwitchPreferenceCompat
             app:key="dark_mode"
             app:summaryOff="The app is in 'Light mode'"
             app:summaryOn="The app is in 'Dark mode'"
-            app:title="Enable Dark Mode" />
+            app:title="Enable Dark Mode" />-->
+
+        <it.apperol.group.worlddatabank.DayNightSwitchPreference
+            android:key="day_night"
+            android:widgetLayout="@layout/daynight_switch"
+            android:title="Enable Dark Mode"
+            android:summary="The app is in 'Light mode'" />
 
     </PreferenceCategory>
 

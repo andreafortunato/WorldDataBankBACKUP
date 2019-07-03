@@ -43,4 +43,5 @@
     <string name="choose_country">Choose a country</string>
     <string name="choose_topic">Choose a Topic</string>
     <string name="choose_indicator">Choose an Indicator</string>
+    <string name="please_choose_how_to_proceed">Please choose how to proceed</string>
 </resources>

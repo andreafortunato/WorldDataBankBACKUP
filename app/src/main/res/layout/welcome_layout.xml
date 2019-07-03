@@ -58,7 +58,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="120dp"
         android:autoSizeTextType="uniform"
-        android:text="Please choose how to proceed"
+        android:text="@string/please_choose_how_to_proceed"
         android:textAlignment="textStart"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"

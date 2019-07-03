@@ -18,12 +18,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import it.apperol.group.worlddatabank.MainActivity;
+import it.apperol.group.worlddatabank.WelcomeFragment;
 import it.apperol.group.worlddatabank.itemlist.MyIndicatorItem;
 import it.apperol.group.worlddatabank.myactivities.CountryActivity;
 import it.apperol.group.worlddatabank.myactivities.IndicatorActivity;
 import it.apperol.group.worlddatabank.myactivities.PlotActivity;
 import it.apperol.group.worlddatabank.myactivities.ProgressActivity;
 import it.apperol.group.worlddatabank.myactivities.TopicActivity;
+import it.apperol.group.worlddatabank.myadapters.MyCountryAdapter;
 import it.apperol.group.worlddatabank.myadapters.MyIndicatorAdapter;
 
 
@@ -90,7 +92,12 @@ public class FetchData extends AsyncTask<Void,Void,Void> {
             TopicActivity.fetchTopic();
         }
         else if(calling == 3){ // Mi ha chiamato plot activity
-            MyIndicatorAdapter.fetchDataControl();
+            if(WelcomeFragment.count == 0) {
+                MyIndicatorAdapter.fetchDataControl();
+            }
+            else if(WelcomeFragment.count == 1){
+                MyCountryAdapter.fetchDataControl();
+            }
         }
         ProgressActivity.actProg.finish();
     }

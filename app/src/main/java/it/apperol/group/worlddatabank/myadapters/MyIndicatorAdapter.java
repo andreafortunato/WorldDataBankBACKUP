@@ -19,7 +19,9 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import it.apperol.group.worlddatabank.R;
+import it.apperol.group.worlddatabank.WelcomeFragment;
 import it.apperol.group.worlddatabank.itemlist.MyIndicatorItem;
+import it.apperol.group.worlddatabank.myactivities.CountryActivity;
 import it.apperol.group.worlddatabank.myactivities.IndicatorActivity;
 import it.apperol.group.worlddatabank.myactivities.PlotActivity;
 import it.apperol.group.worlddatabank.myobjects.PlotObj;
@@ -29,6 +31,7 @@ import it.apperol.group.worlddatabank.myviews.MyTextView;
 public class MyIndicatorAdapter extends RecyclerView.Adapter<MyIndicatorAdapter.ViewHolder> {
 
     public static String indicatorID;
+    public static  String indicatorName;
 
     private List<MyIndicatorItem> myIndicatorItems;
     private static Context context;
@@ -63,8 +66,15 @@ public class MyIndicatorAdapter extends RecyclerView.Adapter<MyIndicatorAdapter.
             public void onClick(View v) {
                 indicatorID = myIndicatorItem.getIndicatorID();
                 myIndicatorItemText = myIndicatorItem;
-                FetchData process = new FetchData("http://api.worldbank.org/v2/country/" + MyCountryAdapter.countryIso2Code + "/indicator/" + myIndicatorItem.getIndicatorID() + "?format=json", IndicatorActivity.indicatorActivityContext, 3);
-                process.execute();
+                indicatorName = myIndicatorItem.getIndicatorName();
+                if(WelcomeFragment.count == 0) {
+                    FetchData process = new FetchData("http://api.worldbank.org/v2/country/" + MyCountryAdapter.countryIso2Code + "/indicator/" + myIndicatorItem.getIndicatorID() + "?format=json", IndicatorActivity.indicatorActivityContext, 3);
+                    process.execute();
+                }
+                else if(WelcomeFragment.count == 1){
+                    Intent countryIntent = new Intent(context, CountryActivity.class);
+                    context.startActivity(countryIntent);
+                }
             }
         });
     }

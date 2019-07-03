@@ -22,7 +22,7 @@ import it.apperol.group.worlddatabank.mythreads.FetchData;
 
 public class CountryActivity extends AppCompatActivity {
 
-    private static Context countryActivityContext;
+    public static Context countryActivityContext;
 
     private static RecyclerView recyclerView;
     private static RecyclerView.Adapter adapter;

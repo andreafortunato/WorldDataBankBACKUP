@@ -6,6 +6,13 @@ import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +27,7 @@ import com.google.android.material.button.MaterialButton;
 import java.util.Objects;
 
 import it.apperol.group.worlddatabank.myactivities.CountryActivity;
+import it.apperol.group.worlddatabank.myactivities.TopicActivity;
 import it.apperol.group.worlddatabank.myviews.MyTextView;
 
 public class WelcomeFragment extends Fragment implements View.OnClickListener {
@@ -28,6 +36,9 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
     private MyTextView myTvTitle, myTvChooseInfo;
     private MaterialButton mbCoArIn, mbArInCo;
     private boolean isTextViewClicked = false;
+    public static int count;
+
+    private Integer iStart, iEnd;
 
     @Nullable
     @Override
@@ -58,9 +69,26 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
         myTvTitle.getPaint().setShader(textShader); // Assegno alla MyTextView 'tvAppName' la sfumatura 'textShader' precedentemente creata
         myTvTitle.setTextColor(Color.parseColor("#FFFFFF")); // Imposto un colore di base per la MyTextView 'tvAppName'
 
+        underlineChoose();
+
         myTvChooseInfo.setOnClickListener(this);
         mbCoArIn.setOnClickListener(this);
         mbArInCo.setOnClickListener(this);
+    }
+
+    private void underlineChoose() {
+        Spannable spannable = new SpannableString(getString(R.string.choose_info));
+        iStart = 1;
+        iEnd = iStart + 19; // Lunghezza stringa da cliccare
+
+        SpannableString ssText = new SpannableString(spannable);
+        ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(getResources().getColor(R.color.colorPrimary));
+
+        ssText.setSpan(foregroundColorSpan, iStart, iEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        myTvChooseInfo.setText(ssText);
+        myTvChooseInfo.setMovementMethod(LinkMovementMethod.getInstance());
+        myTvChooseInfo.setHighlightColor(Color.TRANSPARENT);
+        myTvChooseInfo.setEnabled(true);
     }
 
     @Override
@@ -68,11 +96,15 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.mbCoArIn:
                 Toast.makeText(getActivity(),"mbCoArIn", Toast.LENGTH_SHORT).show();
-                Intent countryIntent = new Intent(getActivity(), CountryActivity.class);
+                count = 0;
+                Intent countryIntent = new Intent(getActivity(), CountryActivity.class);  //TODO: EVIDENCE.
                 startActivity(countryIntent);
                 break;
             case R.id.mbArInCo:
                 Toast.makeText(getActivity(),"mbArInCo", Toast.LENGTH_SHORT).show();
+                count = 1;
+                Intent topicIntent = new Intent(getActivity(), TopicActivity.class);  //TODO: EVIDENCE.
+                startActivity(topicIntent);
                 break;
             case R.id.myTvChooseInfo:
 

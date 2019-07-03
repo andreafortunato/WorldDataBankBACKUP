@@ -42,6 +42,7 @@ import it.apperol.group.worlddatabank.R;
 import it.apperol.group.worlddatabank.SaveShareDialog;
 import it.apperol.group.worlddatabank.myadapters.MyCountryAdapter;
 import it.apperol.group.worlddatabank.myadapters.MyIndicatorAdapter;
+import it.apperol.group.worlddatabank.myadapters.MyTopicAdapter;
 import it.apperol.group.worlddatabank.myobjects.PlotObj;
 import it.apperol.group.worlddatabank.mythreads.FetchData;
 
@@ -65,7 +66,7 @@ public class PlotActivity extends AppCompatActivity {
 
         plotActivityContext = this;
 
-        ja = MyIndicatorAdapter.ja;
+        ja = MyCountryAdapter.ja;
 
         setContentView(R.layout.activity_plot);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -152,7 +153,7 @@ public class PlotActivity extends AppCompatActivity {
     private void fetchPlot() {
 
         dataVals = dataValues1();
-        LineDataSet lineDataSet1 = new LineDataSet(dataVals, "Dio Grafico 1");  //Grafico a linee 1
+        LineDataSet lineDataSet1 = new LineDataSet(dataVals, "Indicator: "+ MyIndicatorAdapter.indicatorName);  //Grafico a linee 1
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();    // insieme di tutti i dati
         dataSets.add(lineDataSet1);         //aggiungo dati 1
 
@@ -189,9 +190,9 @@ public class PlotActivity extends AppCompatActivity {
         //legend.setCustom(legendEntries);     //Customizzare la legenda con legendEntries
 
         Description description = new Description();       //Descrizione da aggiungere sul grafico
-        description.setText("Porcoddio");
-        description.setTextColor(Color.GREEN);
-        description.setTextSize(15);
+        description.setText(MyTopicAdapter.topicName + " of country: " + MyCountryAdapter.countryName);
+        description.setTextColor(Color.RED);
+        description.setTextSize(10);
         mpLineChart.setDescription(description);             //rende visibile la descrizione sul grafico
 
         // Imposta con che grana verranno mostrati gli anni ('1f' corrissponde a: di anno in anno, '2f' un anno si ed uno no, '3f' un anno si e tre no, ecc...)

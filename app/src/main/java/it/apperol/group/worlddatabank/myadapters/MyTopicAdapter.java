@@ -20,6 +20,7 @@ import it.apperol.group.worlddatabank.myviews.MyTextView;
 public class MyTopicAdapter extends RecyclerView.Adapter<MyTopicAdapter.ViewHolder> {
 
     public static Integer topicID;
+    public static  String topicName;
 
     private List<MyTopicItem> myTopicItems;
     private Context context;
@@ -51,6 +52,7 @@ public class MyTopicAdapter extends RecyclerView.Adapter<MyTopicAdapter.ViewHold
                 Intent indicatorIntent = new Intent(context, IndicatorActivity.class);
                 context.startActivity(indicatorIntent);
                 Toast.makeText(context, "Hai cliccato sul topic " + myTopicItem.getTopicName() + " ID: " + myTopicItem.getTopicID(), Toast.LENGTH_SHORT).show();
+                topicName = myTopicItem.getTopicName();
             }
         });
     }

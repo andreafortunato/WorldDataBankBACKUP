@@ -40,6 +40,7 @@ import java.util.concurrent.ExecutionException;
 
 import it.apperol.group.worlddatabank.R;
 import it.apperol.group.worlddatabank.SaveShareDialog;
+import it.apperol.group.worlddatabank.WelcomeFragment;
 import it.apperol.group.worlddatabank.myadapters.MyCountryAdapter;
 import it.apperol.group.worlddatabank.myadapters.MyIndicatorAdapter;
 import it.apperol.group.worlddatabank.myadapters.MyTopicAdapter;
@@ -66,7 +67,10 @@ public class PlotActivity extends AppCompatActivity {
 
         plotActivityContext = this;
 
-        ja = MyCountryAdapter.ja;
+        if(WelcomeFragment.count == 0)
+            ja = MyIndicatorAdapter.ja;
+        else if(WelcomeFragment.count == 1)
+            ja = MyCountryAdapter.ja;
 
         setContentView(R.layout.activity_plot);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

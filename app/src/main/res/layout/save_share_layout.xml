@@ -17,11 +17,29 @@
         android:textColor="@color/colorPrimaryDark"/>
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/mbSaveData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/save_graph_data"
+        android:layout_marginTop="25dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        app:icon="@drawable/chart_icon"
+        app:iconSize="30dp"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:background="@android:color/darker_gray"/>
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/mbSave"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/save_graph"
-        android:layout_marginTop="25dp"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
         app:icon="@drawable/save_icon"

@@ -6,12 +6,14 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +40,14 @@ import android.view.Menu;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
+import java.util.Date;
 
 import it.apperol.group.worlddatabank.myviews.MyTextView;
 
@@ -162,5 +172,22 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         // 'false' se non voglio che rimanga selezionata l'opzione
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        deleteTempFolderRecursive(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString() + "/.tmpChart/"));
+    }
+
+    private void deleteTempFolderRecursive(File fileOrDirectory) {
+
+        if (fileOrDirectory.isDirectory()) {
+            for (File filesInDir : fileOrDirectory.listFiles()) {
+                deleteTempFolderRecursive(filesInDir);
+            }
+        }
+
+        fileOrDirectory.delete();
     }
 }

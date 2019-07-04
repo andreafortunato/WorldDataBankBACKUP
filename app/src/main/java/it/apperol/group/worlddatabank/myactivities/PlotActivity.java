@@ -21,6 +21,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.os.Environment;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
@@ -40,6 +41,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -61,7 +63,7 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class PlotActivity extends AppCompatActivity {
 
-    private static Context plotActivityContext;
+    public static Context plotActivityContext;
 
     private static List<PlotObj> plotDatas = new ArrayList<>();
     public static LineChart mpLineChart;
@@ -79,13 +81,6 @@ public class PlotActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
-
-
-
-
 
         plotActivityContext = this;
 
@@ -177,13 +172,13 @@ public class PlotActivity extends AppCompatActivity {
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                finish();
+                                saveShareDialog.dismiss();
                             }
                         })
                         .setOnDismissListener(new DialogInterface.OnDismissListener() {
                             @Override
                             public void onDismiss(DialogInterface dialog) {
-                                finish();
+                                saveShareDialog.dismiss();
                             }
                         })
                         .setIcon(android.R.drawable.ic_dialog_alert)
@@ -247,6 +242,23 @@ public class PlotActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        deleteTempFolderRecursive(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString() + "/.tmpChart/"));
+    }
+
+    private void deleteTempFolderRecursive(File fileOrDirectory) {
+
+        if (fileOrDirectory.isDirectory()) {
+            for (File filesInDir : fileOrDirectory.listFiles()) {
+                deleteTempFolderRecursive(filesInDir);
+            }
+        }
+
+        fileOrDirectory.delete();
+    }
+
     private void fetchPlot() {
 
         dataVals = dataValues1();
@@ -287,7 +299,7 @@ public class PlotActivity extends AppCompatActivity {
         //legend.setCustom(legendEntries);     //Customizzare la legenda con legendEntries
 
         Description description = new Description();       //Descrizione da aggiungere sul grafico
-        description.setText(MyTopicAdapter.topicName + " of country: " + MyCountryAdapter.countryName);
+        description.setText(MyTopicAdapter.topicName + " of country " + MyCountryAdapter.countryName);
         description.setTextColor(Color.RED);
         description.setTextSize(10);
         mpLineChart.setDescription(description);             //rende visibile la descrizione sul grafico

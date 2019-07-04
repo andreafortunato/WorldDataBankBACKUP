@@ -4,10 +4,15 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,11 +26,18 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 
 import it.apperol.group.worlddatabank.myactivities.PlotActivity;
+import it.apperol.group.worlddatabank.myadapters.MyCountryAdapter;
+import it.apperol.group.worlddatabank.myadapters.MyIndicatorAdapter;
 
 public class SaveShareDialog extends DialogFragment implements View.OnClickListener {
 
@@ -55,27 +67,33 @@ public class SaveShareDialog extends DialogFragment implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.mbSave:
-                dismiss();
-                Log.i("[TAG]", "mbSave");
-                Toast.makeText(getContext(), "mbSave", Toast.LENGTH_SHORT).show();
-
-                // TODO: SALVARE GRAFICO IN GALLERIA
-                createFolder();
-
-                saveImage(PlotActivity.mpLineChart, "TEST");
+                createFolder("ChartGallery");
+                final File file = saveImage(PlotActivity.mpLineChart, "ChartGallery", false);
 
                 Snackbar.make(getActivity().findViewById(android.R.id.content), "Chart saved to gallery", Snackbar.LENGTH_LONG)
                         .setAction("Delete", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                // TODO: ELIMINARE DA GALLERIA IL GRAFICO APPENA SALVATO
-                                Toast.makeText(v.getContext(), "Chart deleted", Toast.LENGTH_SHORT).show();
+                                new AsyncTask<Void, Void, Void>(){
+                                    @Override
+                                    protected Void doInBackground(Void... params) {
+                                        String filePath = file.getAbsolutePath();
+                                        file.delete();
+                                        MediaScannerConnection.scanFile(PlotActivity.plotActivityContext,
+                                                new String[]{filePath}, null, null);
+                                        return null;
+                                    }
+                                }.execute();
+
+                                Toast.makeText(v.getContext(), "Chart image deleted", Toast.LENGTH_SHORT).show();
                             }
                         }).show();
+                dismiss();
                 break;
             case R.id.mbShare:
-                Log.i("[TAG]", "mbShare");
-                Toast.makeText(getContext(), "mbShare", Toast.LENGTH_SHORT).show();
+                createFolder(".tmpChart");
+                shareToWhatsapp();
+                dismiss();
                 break;
             case R.id.mbCancel:
                 dismiss();
@@ -85,8 +103,8 @@ public class SaveShareDialog extends DialogFragment implements View.OnClickListe
         }
     }
 
-    private void createFolder() {
-        File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString() + "/ChartGallery/");
+    private void createFolder(String folderName) {
+        File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString() + "/" + folderName + "/");
 
         if (!folder.exists()) {
             if(!folder.mkdirs()) {
@@ -96,18 +114,47 @@ public class SaveShareDialog extends DialogFragment implements View.OnClickListe
         }
     }
 
-    private void saveImage(LineChart chart, String image_name)
+    private void shareToWhatsapp() {
+        String pack = "com.whatsapp";
+        File file = saveImage(PlotActivity.mpLineChart,".tmpChart", true);
+        try {
+
+
+            Uri imageUri = Uri.parse(file.getAbsolutePath());
+
+            Intent waIntent = new Intent(Intent.ACTION_SEND);
+            waIntent.setType("image/png");
+            waIntent.setPackage(pack);
+            waIntent.putExtra(android.content.Intent.EXTRA_STREAM, imageUri);
+            waIntent.putExtra(Intent.EXTRA_TEXT, "This is the chart for '" + MyIndicatorAdapter.indicatorName + "'of country ' " + MyCountryAdapter.countryName + "'");
+            PlotActivity.plotActivityContext.startActivity(Intent.createChooser(waIntent, "Share with"));
+        } catch (Exception e) {
+            Log.e("Error on sharing", e + " ");
+            Toast.makeText(PlotActivity.plotActivityContext, "Whatsapp not Installed!", Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
+
+    private File saveImage(LineChart chart, String folderName, Boolean tempSave)
     {
         Bitmap finalBitmap;
         int width = chart.getWidth();
         int height = chart.getHeight();
         Bitmap cBitmap = chart.getChartBitmap();
         finalBitmap = Bitmap.createScaledBitmap(cBitmap, width, height, true);
-        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString() + "/ChartGallery/";
+        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString() + "/" + folderName + "/";
 
-        // TODO: MODIFICARE NOME IMMAGINE (COUNTRY-ARGUMENT-INDICATOR)
-        String fname = "Image-" + image_name + ".png";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss");
+        Date date = new Date();
+        String dateTime = "<" + sdf.format(date) + ">";
+        String fname;
 
+        if(tempSave) {
+            fname = System.currentTimeMillis() + ".png";
+        } else {
+            fname = dateTime + MyCountryAdapter.countryIso2Code.toUpperCase() + "-" + MyIndicatorAdapter.indicatorName + ".png";
+        }
         File file = new File(path, fname);
         try
         {
@@ -121,6 +168,7 @@ public class SaveShareDialog extends DialogFragment implements View.OnClickListe
         {
             e.printStackTrace();
         }
-    }
 
+        return file;
+    }
 }

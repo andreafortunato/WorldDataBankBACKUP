@@ -44,5 +44,5 @@
     <string name="choose_topic">Choose a Topic</string>
     <string name="choose_indicator">Choose an Indicator</string>
     <string name="please_choose_how_to_proceed">Please choose how to proceed</string>
-    <string name="save_graph_data">Sava chart data offline</string>
+    <string name="save_graph_data">Save chart data offline</string>
 </resources>

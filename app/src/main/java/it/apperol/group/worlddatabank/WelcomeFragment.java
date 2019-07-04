@@ -12,9 +12,7 @@ import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
-import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,8 +57,7 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
 
         myTvTitle.setText(String.format("%s App", getResources().getString(R.string.app_title)));
 
-        // Il seguente blocco, fino alla riga [93], serve solamente a colorare la scritta 'Google Play Services Api'
-        myTvTitle.measure(0,0); // Faccio partire le 'misure' (come fosse un righello) da 0
+        myTvTitle.measure(0,0);
         Shader textShader = new LinearGradient(0, (float)myTvTitle.getMeasuredHeight()/2, (float)myTvTitle.getMeasuredWidth(), (float)myTvTitle.getMeasuredHeight()/2,
                 new int[]{
                         Color.parseColor("#F97C3C"),
@@ -68,9 +65,9 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
                         Color.parseColor("#64B678"),
                         Color.parseColor("#478AEA"),
                         Color.parseColor("#8446CC"),
-                }, null, Shader.TileMode.CLAMP); // Dalla riga [84] fino a questa riga creo un 'modello di pittura', cioè una sfumatura di colori
-        myTvTitle.getPaint().setShader(textShader); // Assegno alla MyTextView 'tvAppName' la sfumatura 'textShader' precedentemente creata
-        myTvTitle.setTextColor(Color.parseColor("#FFFFFF")); // Imposto un colore di base per la MyTextView 'tvAppName'
+                }, null, Shader.TileMode.CLAMP);
+        myTvTitle.getPaint().setShader(textShader);
+        myTvTitle.setTextColor(Color.parseColor("#FFFFFF"));
 
         underlineChoose();
 

@@ -3,7 +3,11 @@ package it.apperol.group.worlddatabank;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +17,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.github.mikephil.charting.charts.LineChart;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Objects;
+
+import it.apperol.group.worlddatabank.myactivities.PlotActivity;
 
 public class SaveShareDialog extends DialogFragment implements View.OnClickListener {
 
@@ -49,6 +60,9 @@ public class SaveShareDialog extends DialogFragment implements View.OnClickListe
                 Toast.makeText(getContext(), "mbSave", Toast.LENGTH_SHORT).show();
 
                 // TODO: SALVARE GRAFICO IN GALLERIA
+                createFolder();
+
+                saveImage(PlotActivity.mpLineChart, "TEST");
 
                 Snackbar.make(getActivity().findViewById(android.R.id.content), "Chart saved to gallery", Snackbar.LENGTH_LONG)
                         .setAction("Delete", new View.OnClickListener() {
@@ -70,4 +84,43 @@ public class SaveShareDialog extends DialogFragment implements View.OnClickListe
                 break;
         }
     }
+
+    private void createFolder() {
+        File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString() + "/ChartGallery/");
+
+        if (!folder.exists()) {
+            if(!folder.mkdirs()) {
+                Log.e("[ERROR]", "Error creating folder");
+                Objects.requireNonNull(getActivity()).finish();
+            }
+        }
+    }
+
+    private void saveImage(LineChart chart, String image_name)
+    {
+        Bitmap finalBitmap;
+        int width = chart.getWidth();
+        int height = chart.getHeight();
+        Bitmap cBitmap = chart.getChartBitmap();
+        finalBitmap = Bitmap.createScaledBitmap(cBitmap, width, height, true);
+        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString() + "/ChartGallery/";
+
+        // TODO: MODIFICARE NOME IMMAGINE (COUNTRY-ARGUMENT-INDICATOR)
+        String fname = "Image-" + image_name + ".png";
+
+        File file = new File(path, fname);
+        try
+        {
+            FileOutputStream out = new FileOutputStream(file);
+            finalBitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+            Objects.requireNonNull(getActivity()).sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
+            out.flush();
+            out.close();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
 }

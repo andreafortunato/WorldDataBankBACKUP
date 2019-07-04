@@ -2,7 +2,12 @@ package it.apperol.group.worlddatabank.myactivities;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.github.mikephil.charting.components.AxisBase;
@@ -11,8 +16,12 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -47,16 +56,22 @@ import it.apperol.group.worlddatabank.myadapters.MyTopicAdapter;
 import it.apperol.group.worlddatabank.myobjects.PlotObj;
 import it.apperol.group.worlddatabank.mythreads.FetchData;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
 public class PlotActivity extends AppCompatActivity {
 
     private static Context plotActivityContext;
 
     private static List<PlotObj> plotDatas = new ArrayList<>();
-    static LineChart mpLineChart;
+    public static LineChart mpLineChart;
     static int[] colorArray = {Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW};
     //String[] legendName = {"Cazzo","Buddha","PadrePio","Salveenee"};
     private static JSONArray ja;
     private static ArrayList<Entry> dataVals;
+
+    private ArrayList permissions = new ArrayList();
+    private ArrayList permissionsToRequest;
 
     private SaveShareDialog saveShareDialog = new SaveShareDialog();
 
@@ -64,6 +79,13 @@ public class PlotActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
+
+
+
+
 
         plotActivityContext = this;
 
@@ -81,7 +103,7 @@ public class PlotActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                // TODO: MOSTRARE DIALOGBOX "SALVARE/CONDIVIDERE? SI/NO"
+                askPermissions();
 
                 saveShareDialog.show(getSupportFragmentManager(),"mySaveShareDialog");
 
@@ -92,11 +114,82 @@ public class PlotActivity extends AppCompatActivity {
 
         mpLineChart =(LineChart) findViewById(R.id.line_chart);
 
-        //FetchData process = new FetchData("http://api.worldbank.org/v2/country/" + MyCountryAdapter.countryIso2Code + "/indicator/" + MyIndicatorAdapter.indicatorID + "?format=json", this, 3);
-        //process.execute();
-
         fetchPlot();
 
+    }
+
+    private void askPermissions() {
+        permissions.add(WRITE_EXTERNAL_STORAGE);
+        permissions.add(READ_EXTERNAL_STORAGE);
+
+        permissionsToRequest = findUnAskedPermissions(permissions);
+
+        if(!permissionsToRequest.isEmpty()) {
+            Toast.makeText(this, getString(R.string.grantPerm), Toast.LENGTH_LONG).show();
+            requestPermissions((String[]) permissionsToRequest.toArray(new String[permissionsToRequest.size()]), 777);
+        }
+
+    }
+
+    private ArrayList findUnAskedPermissions(ArrayList<String> wanted) {
+        ArrayList result = new ArrayList();
+
+        for (String perm : wanted) {
+            if (!hasPermission(perm)) {
+                result.add(perm);
+            }
+        }
+        return result;
+    }
+
+    private boolean hasPermission(String permission) {
+        Boolean hasMarshmallow = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+        if (hasMarshmallow) {
+            return (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED);
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+
+            if (shouldShowRequestPermissionRationale(permissions[0])) {
+                Toast.makeText(this, R.string.grantPerm, Toast.LENGTH_LONG).show();
+                requestPermissions((String[]) permissionsToRequest.toArray(new String[permissionsToRequest.size()]), 777);
+
+            } else {
+
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.permError)
+                        .setMessage(R.string.permDenied)
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent();
+                                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                                intent.setData(uri);
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                            }
+                        })
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                finish();
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }
+        }
     }
 
     private static ArrayList<Entry> dataValues1()

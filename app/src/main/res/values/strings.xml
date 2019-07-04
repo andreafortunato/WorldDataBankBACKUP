@@ -45,4 +45,8 @@
     <string name="choose_indicator">Choose an Indicator</string>
     <string name="please_choose_how_to_proceed">Please choose how to proceed</string>
     <string name="save_graph_data">Save chart data offline</string>
+    <string name="grantPerm">Please grant the permissions to read/write from external storage</string>
+    <string name="permError"><![CDATA[---> Permissions error <---]]></string>
+    <string name="permDenied"><![CDATA[Permissions permanently denied (with "Don\'t show again" checkbox). Please grant them from \'Settings->Permissions\' app page.\n\nDo you want to open it now?]]></string>
+    <string name="yes">Yes</string>
 </resources>

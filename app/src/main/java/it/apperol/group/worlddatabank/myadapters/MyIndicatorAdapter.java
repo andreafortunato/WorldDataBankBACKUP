@@ -9,18 +9,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import it.apperol.group.worlddatabank.R;
 import it.apperol.group.worlddatabank.WelcomeFragment;
 import it.apperol.group.worlddatabank.itemlist.MyIndicatorItem;
+import it.apperol.group.worlddatabank.itemlist.MyTopicItem;
 import it.apperol.group.worlddatabank.myactivities.CountryActivity;
 import it.apperol.group.worlddatabank.myactivities.IndicatorActivity;
 import it.apperol.group.worlddatabank.myactivities.PlotActivity;
@@ -28,12 +32,13 @@ import it.apperol.group.worlddatabank.myobjects.PlotObj;
 import it.apperol.group.worlddatabank.mythreads.FetchData;
 import it.apperol.group.worlddatabank.myviews.MyTextView;
 
-public class MyIndicatorAdapter extends RecyclerView.Adapter<MyIndicatorAdapter.ViewHolder> {
+public class MyIndicatorAdapter extends RecyclerView.Adapter<MyIndicatorAdapter.ViewHolder> implements Filterable {
 
     public static String indicatorID;
     public static  String indicatorName;
 
     private List<MyIndicatorItem> myIndicatorItems;
+    private List<MyIndicatorItem> myIndicatorItemsFull;
     private static Context context;
 
     public static JSONArray ja;
@@ -43,6 +48,7 @@ public class MyIndicatorAdapter extends RecyclerView.Adapter<MyIndicatorAdapter.
     public MyIndicatorAdapter(List<MyIndicatorItem> myIndicatorItems, Context context) {
         this.myIndicatorItems = myIndicatorItems;
         this.context = context;
+        myIndicatorItemsFull = new ArrayList<>(myIndicatorItems);
     }
 
 
@@ -84,6 +90,42 @@ public class MyIndicatorAdapter extends RecyclerView.Adapter<MyIndicatorAdapter.
         return myIndicatorItems.size();
     }
 
+    @Override
+    public Filter getFilter() {
+        return indicatorFilter;
+    }
+
+    private Filter indicatorFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<MyIndicatorItem> filteredList = new ArrayList<>();
+
+            if (constraint == null || constraint.length() == 0) {
+                filteredList.addAll(myIndicatorItemsFull);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+
+                for (MyIndicatorItem item : myIndicatorItemsFull) {
+                    if (item.getIndicatorName().toLowerCase().contains(filterPattern)) {
+                        filteredList.add(item);
+                    }
+                }
+            }
+
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            myIndicatorItems.clear();
+            myIndicatorItems.addAll((List) results.values);
+            notifyDataSetChanged();
+        }
+    };
+
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         public MyTextView myTvIndicatorName;
@@ -101,19 +143,6 @@ public class MyIndicatorAdapter extends RecyclerView.Adapter<MyIndicatorAdapter.
 
     public static void fetchDataControl() {
         ja = FetchData.ja;
-
-                /*try {
-                    for(int i = 0; i < ja.getJSONArray(1).length(); i++){
-                        JSONObject jo = (JSONObject) ja.getJSONArray(1).get(i);
-                        if(!jo.get("value").equals("") && jo.get("value") != null && !jo.get("value").equals("null") && !jo.isNull("value")) {
-                            plotDatas.add(new PlotObj(jo.get("date").toString(), jo.get("value").toString()));
-                        }
-                    }
-                }catch (Exception e){
-                    Log.i("[CRASH]", "CRASH");
-                    e.printStackTrace();
-                    return;
-                }*/
 
         if(ja != null) {
             Intent plotIntent = new Intent(context, PlotActivity.class);

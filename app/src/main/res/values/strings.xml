@@ -49,4 +49,6 @@
     <string name="permError"><![CDATA[---> Permissions error <---]]></string>
     <string name="permDenied"><![CDATA[Permissions permanently denied (with "Don\'t show again" checkbox). Please grant them from \'Settings->Permissions\' app page.\n\nDo you want to open it now?]]></string>
     <string name="yes">Yes</string>
+    <string name="error">Error</string>
+    <string name="indicator_not_available">We are so sorry but this indicator is not available</string>
 </resources>

@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -17,6 +19,7 @@ import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import it.apperol.group.worlddatabank.R;
@@ -31,18 +34,20 @@ import it.apperol.group.worlddatabank.myviews.MyTextView;
 
 import static it.apperol.group.worlddatabank.myadapters.MyIndicatorAdapter.myIndicatorItemText;
 
-public class MyCountryAdapter extends RecyclerView.Adapter<MyCountryAdapter.ViewHolder> {
+public class MyCountryAdapter extends RecyclerView.Adapter<MyCountryAdapter.ViewHolder> implements Filterable {
 
     public static String countryIso2Code;
     public static String countryName;
 
     private List<MyCountryItem> myCountryItems;
+    private List<MyCountryItem> myCountryItemFull;
     private static Context context;
     public static JSONArray ja;
 
     public MyCountryAdapter(List<MyCountryItem> myCountryItems, Context context) {
         this.myCountryItems = myCountryItems;
         this.context = context;
+        myCountryItemFull = new ArrayList<>(myCountryItems);
     }
 
 
@@ -89,6 +94,42 @@ public class MyCountryAdapter extends RecyclerView.Adapter<MyCountryAdapter.View
         return myCountryItems.size();
     }
 
+    @Override
+    public Filter getFilter() {
+        return countryFilter;
+    }
+
+    private Filter countryFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<MyCountryItem> filteredList = new ArrayList<>();
+
+            if (constraint == null || constraint.length() == 0) {
+                filteredList.addAll(myCountryItemFull);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+
+                for (MyCountryItem item : myCountryItemFull) {
+                    if (item.getCountryName().toLowerCase().contains(filterPattern)) {
+                        filteredList.add(item);
+                    }
+                }
+            }
+
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            myCountryItems.clear();
+            myCountryItems.addAll((List) results.values);
+            notifyDataSetChanged();
+        }
+    };
+
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         public MyTextView myTvCountryName;
@@ -130,4 +171,6 @@ public class MyCountryAdapter extends RecyclerView.Adapter<MyCountryAdapter.View
             Log.i("[ERRORE]", "ERRORE");
         }
     }
+
+
 }

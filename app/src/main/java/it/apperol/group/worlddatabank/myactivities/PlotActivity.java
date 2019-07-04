@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
+import it.apperol.group.worlddatabank.MainActivity;
 import it.apperol.group.worlddatabank.R;
 import it.apperol.group.worlddatabank.SaveShareDialog;
 import it.apperol.group.worlddatabank.WelcomeFragment;
@@ -76,6 +77,7 @@ public class PlotActivity extends AppCompatActivity {
     private ArrayList permissionsToRequest;
 
     private SaveShareDialog saveShareDialog = new SaveShareDialog();
+    private android.app.AlertDialog.Builder noDataFoundDialog;
 
 
     @Override
@@ -190,6 +192,9 @@ public class PlotActivity extends AppCompatActivity {
     private static ArrayList<Entry> dataValues1()
     {
         getDatas();
+        if(ja == null) {
+            return null;
+        }
 
         // Riordino i dati secondo l'anno (ordine crescente)
         Collections.sort(plotDatas, new Comparator<PlotObj>() {
@@ -228,6 +233,11 @@ public class PlotActivity extends AppCompatActivity {
                     plotDatas.add(new PlotObj(jo.get("date").toString(), jo.get("value").toString()));
                 }
             }
+            if(plotDatas.size() == 0) {
+                ja = null;
+
+                return;
+            }
         }catch (Exception e){
             Log.i("[CRASH]", "CRASH");
             e.printStackTrace();
@@ -262,6 +272,27 @@ public class PlotActivity extends AppCompatActivity {
     private void fetchPlot() {
 
         dataVals = dataValues1();
+        if(dataVals == null) {
+
+            if(WelcomeFragment.count == 0) {
+                noDataFoundDialog = new android.app.AlertDialog.Builder(IndicatorActivity.indicatorActivityContext);
+            } else {
+                noDataFoundDialog = new android.app.AlertDialog.Builder(CountryActivity.countryActivityContext);
+
+            }
+            noDataFoundDialog.setTitle(getResources().getString(R.string.error));
+            noDataFoundDialog.setMessage(getResources().getString(R.string.indicator_not_available));
+            noDataFoundDialog.setCancelable(false);
+            noDataFoundDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            android.app.AlertDialog alert = noDataFoundDialog.create();
+            alert.show();
+            finish();
+        }
         LineDataSet lineDataSet1 = new LineDataSet(dataVals, "Indicator: "+ MyIndicatorAdapter.indicatorName);  //Grafico a linee 1
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();    // insieme di tutti i dati
         dataSets.add(lineDataSet1);         //aggiungo dati 1

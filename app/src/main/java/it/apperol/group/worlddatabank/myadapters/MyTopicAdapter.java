@@ -4,30 +4,38 @@ import android.content.Context;
 import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.preference.ListPreference;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import it.apperol.group.worlddatabank.R;
+import it.apperol.group.worlddatabank.itemlist.MyCountryItem;
 import it.apperol.group.worlddatabank.itemlist.MyTopicItem;
 import it.apperol.group.worlddatabank.myactivities.IndicatorActivity;
 import it.apperol.group.worlddatabank.myviews.MyTextView;
 
-public class MyTopicAdapter extends RecyclerView.Adapter<MyTopicAdapter.ViewHolder> {
+public class MyTopicAdapter extends RecyclerView.Adapter<MyTopicAdapter.ViewHolder> implements Filterable {
 
     public static Integer topicID;
     public static  String topicName;
 
     private List<MyTopicItem> myTopicItems;
+    private List<MyTopicItem> myTopicItemsFull;
     private Context context;
 
     public MyTopicAdapter(List<MyTopicItem> myTopicItems, Context context) {
         this.myTopicItems = myTopicItems;
         this.context = context;
+        myTopicItemsFull = new ArrayList<>(myTopicItems);
     }
 
 
@@ -61,6 +69,42 @@ public class MyTopicAdapter extends RecyclerView.Adapter<MyTopicAdapter.ViewHold
     public int getItemCount() {
         return myTopicItems.size();
     }
+
+    @Override
+    public Filter getFilter() {
+        return topicFilter;
+    }
+
+    private Filter topicFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<MyTopicItem> filteredList = new ArrayList<>();
+
+            if (constraint == null || constraint.length() == 0) {
+                filteredList.addAll(myTopicItemsFull);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+
+                for (MyTopicItem item : myTopicItemsFull) {
+                    if (item.getTopicName().toLowerCase().contains(filterPattern)) {
+                        filteredList.add(item);
+                    }
+                }
+            }
+
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            myTopicItems.clear();
+            myTopicItems.addAll((List) results.values);
+            notifyDataSetChanged();
+        }
+    };
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 

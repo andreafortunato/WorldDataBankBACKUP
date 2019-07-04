@@ -1,10 +1,13 @@
 package it.apperol.group.worlddatabank;
 
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -72,6 +75,12 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
         underlineChoose();
 
         myTvChooseInfo.setOnClickListener(this);
+
+        if(!isConnected()) {
+            mbCoArIn.setEnabled(false);
+            mbArInCo.setEnabled(false);
+        }
+
         mbCoArIn.setOnClickListener(this);
         mbArInCo.setOnClickListener(this);
     }
@@ -126,5 +135,15 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
                     isTextViewClicked = true;
                 }
         }
+    }
+
+    private Boolean isConnected() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) Objects.requireNonNull(getActivity()).getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            return true;
+        }
+        else
+            return false;
     }
 }

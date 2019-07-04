@@ -28,6 +28,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,13 +36,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
+import it.apperol.group.worlddatabank.itemlist.MyCountryItem;
+import it.apperol.group.worlddatabank.myactivities.CountryActivity;
 import it.apperol.group.worlddatabank.myactivities.PlotActivity;
 import it.apperol.group.worlddatabank.myadapters.MyCountryAdapter;
 import it.apperol.group.worlddatabank.myadapters.MyIndicatorAdapter;
+import it.apperol.group.worlddatabank.myadapters.MyTopicAdapter;
 
 public class SaveShareDialog extends DialogFragment implements View.OnClickListener {
 
-    private MaterialButton mbSave, mbShare, mbCancel;
+    private MaterialButton mbSaveData, mbSave, mbShare, mbCancel;
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -50,12 +54,13 @@ public class SaveShareDialog extends DialogFragment implements View.OnClickListe
         View view = getActivity().getLayoutInflater().inflate(R.layout.save_share_layout, null, false);
 
         builder.setView(view);
-
+        mbSaveData = view.findViewById(R.id.mbSaveData);
         mbSave = view.findViewById(R.id.mbSave);
         mbShare = view.findViewById(R.id.mbShare);
         mbCancel = view.findViewById(R.id.mbCancel);
 
         // 2. set click listeners on desired views
+        mbSaveData.setOnClickListener(this);
         mbSave.setOnClickListener(this);
         mbShare.setOnClickListener(this);
         mbCancel.setOnClickListener(this);
@@ -66,6 +71,11 @@ public class SaveShareDialog extends DialogFragment implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.mbSaveData:
+                saveData(PlotActivity.ja.toString());
+                Snackbar.make(getActivity().findViewById(android.R.id.content), "Chart data saved successfully", Snackbar.LENGTH_LONG).show();
+                dismiss();
+                break;
             case R.id.mbSave:
                 createFolder("ChartGallery");
                 final File file = saveImage(PlotActivity.mpLineChart, "ChartGallery", false);
@@ -101,6 +111,64 @@ public class SaveShareDialog extends DialogFragment implements View.OnClickListe
             default:
                 break;
         }
+    }
+
+    private void saveData(String data) {
+        File path = Objects.requireNonNull(getActivity()).getApplicationContext().getFilesDir();
+        File file = new File(path, MyCountryAdapter.countryName + "-" + MyTopicAdapter.topicName + "-" + MyIndicatorAdapter.indicatorName + ".txt");
+        if(file.exists()) {
+            file.delete();
+        }
+
+        FileOutputStream stream = null;
+        try {
+            stream = new FileOutputStream(file);
+            stream.getChannel().truncate(0);
+            stream.getChannel().force(true);
+
+            stream.write(data.getBytes());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private String readData() {
+        File file = new File(Objects.requireNonNull(getActivity()).getApplicationContext().getFilesDir(),MyCountryAdapter.countryName + "-" + MyTopicAdapter.topicName + "-" + MyIndicatorAdapter.indicatorName + ".txt");
+        int len = (int) file.length();
+        String contents;
+        byte[] bytes = new byte[len];
+
+        FileInputStream in = null;
+        try {
+            in = new FileInputStream(file);
+            in.read(bytes);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally{
+            try {
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            catch (NullPointerException e){
+                e.printStackTrace();
+            }
+        }
+
+        contents = new String(bytes);
+        return contents;
     }
 
     private void createFolder(String folderName) {

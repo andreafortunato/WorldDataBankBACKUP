@@ -70,7 +70,7 @@ public class PlotActivity extends AppCompatActivity {
     public static LineChart mpLineChart;
     static int[] colorArray = {Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW};
     //String[] legendName = {"Cazzo","Buddha","PadrePio","Salveenee"};
-    private static JSONArray ja;
+    public static JSONArray ja;
     private static ArrayList<Entry> dataVals;
 
     private ArrayList permissions = new ArrayList();
@@ -103,9 +103,6 @@ public class PlotActivity extends AppCompatActivity {
                 askPermissions();
 
                 saveShareDialog.show(getSupportFragmentManager(),"mySaveShareDialog");
-
-                Snackbar.make(view, "Da eliminare", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
             }
         });
 

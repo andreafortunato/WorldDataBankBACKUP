@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -98,14 +100,23 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
+        // TODO: PREFERENCE (LINGUA)
         SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(this);
         Boolean x = s.getBoolean("sync", false);
         Toast.makeText(this, x.toString(), Toast.LENGTH_SHORT).show();
 
-        Log.i("[LOG]", getSupportFragmentManager().toString());
 
 
+    }
 
+    private Boolean isConnected() {
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            return true;
+        }
+        else
+            return false;
     }
 
     private void openInfoDialog() {
@@ -155,12 +166,12 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new WelcomeFragment()).commit();
         } else if (id == R.id.nav_gallery) {
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_tools) {
+        } else if (id == R.id.nav_offline) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new OfflineFragment()).commit();
+        } else if (id == R.id.nav_settings) {
             getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new SettingsActivity.SettingsFragment()).commit();
         } else if (id == R.id.nav_share) {
 
